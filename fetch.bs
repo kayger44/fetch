@@ -232,13 +232,6 @@ number.
 <p class="note no-backref"><a>HTTP(S) scheme</a>, <a>network scheme</a>, and <a>fetch scheme</a> are
 also used by <cite>HTML</cite>. [[HTML]]
 
-<hr>
-
-<p id=fetch-url>A <dfn>response URL</dfn> is a <a for=/>URL</a> for which implementations need not
-store the <a for=url>fragment</a> as it is never exposed. When
-<a lt="url serializer">serialized</a>, the <i>exclude fragment flag</i> is set, meaning
-implementations can store the <a for=url>fragment</a> nonetheless.
-
 
 <h3 id=http>HTTP</h3>
 
@@ -1772,15 +1765,15 @@ end-user.
 
 <p>A <a for=/>response</a> has an associated
 <dfn export for=response id=concept-response-url>URL</dfn>. It is a pointer to the last
-<a>response URL</a> in <a for=/>response</a>'s <a for=response>URL list</a> and null if
-<a for=/>response</a>'s <a for=response>URL list</a> is the empty list.
+<a for=/>URL</a> in <a for=/>response</a>'s <a for=response>URL list</a> and null if
+<a for=/>response</a>'s <a for=response>URL list</a> <a for=list>is empty</a>.
 
 <p>A <a for=/>response</a> has an associated
 <dfn export for=response id=concept-response-url-list>URL list</dfn> (a <a for=/>list</a> of zero or
-more <a>response URLs</a>). Unless stated otherwise, it is the empty list.
+more <a for=/>URLs</a>). Unless stated otherwise, it is the empty list.
 
-<p class="note no-backref">Except for the last <a>response URL</a>, if any, a
-<a for=/>response</a>'s <a for=response>URL list</a> cannot be exposed to script. That would violate
+<p class="note no-backref">Except for the last <a for=/>URL</a>, if any, a <a for=/>response</a>'s
+<a for=response>URL list</a> is not exposed to script as that would violate
 <a>atomic HTTP redirect handling</a>.
 
 <p>A <a for=/>response</a> has an associated
@@ -3874,6 +3867,13 @@ optional <i>CORS-preflight flag</i>, run these steps:
       </ul>
 
       <p>then return a <a>network error</a>.
+
+     <li>
+      <p>If <var>actualResponse</var>'s <a for=response>URL</a>'s <a for=url>fragment</a> is null,
+      then set <var>actualResponse</var>'s <a for=response>URL</a>'s <a for=url>fragment</a> to
+      <var>request</var>'s <a for=request>current URL</a>'s <a for=url>fragment</a>.
+
+      <p class=note>Without this step, the fragment would end up getting lost due to the Cache API.
     </ol>
   </ol>
 
@@ -3953,6 +3953,14 @@ optional <i>CORS-preflight flag</i>, run these steps:
    <li><p>If <var>location</var> is a <a for=header>value</a>, then set <var>location</var> to the
    result of <a lt="url parser">parsing</a> <var>location</var> with <var>actualResponse</var>'s
    <a for=response>URL</a>.
+
+   <li>
+    <p>If <var>location</var> is not failure and <var>location</var>'s <a for=url>fragment</a> is
+    null, then set <var>location</var>'s <a for=url>fragment</a> to <var>request</var>'s
+    <a for=request>current URL</a>'s <a for=url>fragment</a>.
+
+    <p class=note>This ensures that synthetic (indeed, all) responses follow the processing model
+    for redirects defined by HTTP. [[HTTP-SEMANTICS]]
 
    <li><p>Set <var>actualResponse</var>'s
    <a for=response>location URL</a> to <var>location</var>.
@@ -6560,8 +6568,7 @@ return the <a>context object</a>'s <a for=Response>response</a>'s <a for=respons
 <p>The <dfn attribute for=Response><code>url</code></dfn> attribute's getter, when invoked, must
 return the empty string if the <a>context object</a>'s <a for=Response>response</a>'s
 <a for=response>URL</a> is null and the <a>context object</a>'s <a for=Response>response</a>'s
-<a for=response>URL</a>, <a lt="url serializer">serialized</a> with the <i>exclude-fragment flag</i>
-set, otherwise. [[!URL]]
+<a for=response>URL</a>, <a lt="url serializer">serialized</a>, otherwise. [[!URL]]
 
 <p>The <dfn attribute for=Response><code>redirected</code></dfn> attribute's getter, when invoked,
 must return true if the <a>context object</a>'s <a for=Response>response</a>'s
